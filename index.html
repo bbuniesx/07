@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>НМТ з історії України</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>НМТ з історії України</h1>
+    <input type="text" id="name" placeholder="Введіть ваше ім’я" required />
+    <input type="number" id="code" placeholder="Введіть код доступу" required />
+    <button onclick="startTest()">Розпочати тестування</button>
+
+    <div id="testSection" class="hidden">
+      <p>Ласкаво просимо до тестування, <span id="userName"></span>!</p>
+      <p>У вас є <strong>1 година</strong> для проходження тесту.</p>
+      <p id="timer"></p>
+      <!-- Тут можуть бути ваші запитання -->
+    </div>
+  </div>
+
+  <script>
+    function startTest() {
+      const name = document.getElementById("name").value;
+      const code = document.getElementById("code").value;
+
+      if (code == "27") {
+        document.getElementById("userName").textContent = name;
+        document.getElementById("testSection").classList.remove("hidden");
+
+        // Сховати форму входу
+        document.getElementById("name").style.display = "none";
+        document.getElementById("code").style.display = "none";
+        document.querySelector("button").style.display = "none";
+
+        startTimer(3600); // 1 година = 3600 секунд
+      } else {
+        alert("Невірний код доступу. Спробуйте ще раз.");
+      }
+    }
+
+    function startTimer(seconds) {
+      const timer = document.getElementById("timer");
+      const interval = setInterval(() => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        timer.textContent = `Залишилось часу: ${h}г ${m}хв ${s}сек`;
+        seconds--;
+
+        if (seconds < 0) {
+          clearInterval(interval);
+          timer.textContent = "Час вичерпано!";
+          // Тут можна додати функцію завершення тесту
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
