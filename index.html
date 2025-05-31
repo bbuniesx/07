@@ -100,3 +100,218 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>НМТ з історії України - Питання 1/30</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #0057b7;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #0057b7;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .progress-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            flex-grow: 1;
+            margin: 0 10px;
+        }
+        .progress {
+            height: 100%;
+            width: 3.33%; /* 1/30 */
+            background-color: #ffd700;
+            border-radius: 5px;
+        }
+        .question-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-left: 4px solid #0057b7;
+            border-radius: 4px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option:hover {
+            border-color: #0057b7;
+            background-color: #f0f7ff;
+        }
+        .option.selected {
+            background-color: #0057b7;
+            color: white;
+            border-color: #0057b7;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        button {
+            background-color: #0057b7;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background-color: #004494;
+        }
+        .timer {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .question-number {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="question-number">Питання 1 з 30</div>
+        <div class="timer">Час: <span id="time">60:00</span></div>
+    </div>
+
+    <div class="progress-container">
+        <div>Прогрес:</div>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div>3%</div>
+    </div>
+    
+    <h1>НМТ з історії України</h1>
+    
+    <div class="question-container">
+        <div class="question-text">
+            Прочитайте уривок джерела. «Ми, Сигізмунд Август, даною грамотою оголошуємо таке: на скликаному цьому сеймі закінчити справу [об'єднання] між князівством Литовським та королівством Польським у братерській любові й за згодою обох народів...» В уривку йдеться про укладення
+        </div>
+        
+        <div class="options" id="options">
+            <div class="option" data-value="A">А. Кревської унії.</div>
+            <div class="option" data-value="B">Б. Берестейської унії.</div>
+            <div class="option" data-value="C">В. Городельської унії.</div>
+            <div class="option" data-value="D">Г. Люблінської унії.</div>
+        </div>
+    </div>
+    
+    <div class="navigation">
+        <button disabled id="prevBtn">← Попереднє</button>
+        <button id="nextBtn">Наступне →</button>
+    </div>
+
+    <script>
+        // Таймер на 60 хвилин
+        let timeLeft = 60 * 60; // 60 хвилин у секундах
+        const timerElement = document.getElementById('time');
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("Час вийшов! Тест буде автоматично завершено.");
+                // Тут можна додати логіку завершення тесту
+            }
+            timeLeft--;
+        }
+        
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Запускаємо одразу
+
+        // Обробник вибору відповіді
+        const options = document.querySelectorAll('.option');
+        let selectedOption = null;
+        
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                // Знімаємо виділення з попереднього вибору
+                if (selectedOption) {
+                    selectedOption.classList.remove('selected');
+                }
+                
+                // Додаємо виділення до поточного вибору
+                this.classList.add('selected');
+                selectedOption = this;
+                
+                // Зберігаємо вибір
+                localStorage.setItem('question1', this.dataset.value);
+            });
+        });
+        
+        // Перевіряємо, чи був зроблений вибір раніше
+        const savedAnswer = localStorage.getItem('question1');
+        if (savedAnswer) {
+            const previouslySelected = document.querySelector(`.option[data-value="${savedAnswer}"]`);
+            if (previouslySelected) {
+                previouslySelected.classList.add('selected');
+                selectedOption = previouslySelected;
+            }
+        }
+        
+        // Обробник кнопки "Наступне"
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            if (!selectedOption) {
+                alert('Будь ласка, оберіть варіант відповіді!');
+                return;
+            }
+            
+            // Тут можна додати перехід до наступного питання
+            // Наприклад: window.location.href = 'question2.html';
+            console.log('Відповідь збережено:', selectedOption.dataset.value);
+            alert('Відповідь збережено! Перехід до наступного питання.');
+        });
+    </script>
+</body>
+</html>
