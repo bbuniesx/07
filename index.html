@@ -5,313 +5,676 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>НМТ з історії України</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #0057b7;
-            text-align: center;
-        }
-        .form-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        button {
-            background-color: #0057b7;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #004494;
-        }
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h1>НМТ з історії України</h1>
         
-        <form id="startForm">
-            <div class="form-group">
-                <label for="studentName">Ваше ім'я:</label>
-                <input type="text" id="studentName" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="accessCode">Код доступу:</label>
-                <input type="password" id="accessCode" required>
-                <div id="codeError" class="error" style="display: none;">Невірний код доступу. Спробуйте ще раз.</div>
-            </div>
-            
-            <button type="submit">Розпочати тестування</button>
-        </form>
-    </div>
-
-    <script>
-        document.getElementById('startForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const accessCode = document.getElementById('accessCode').value;
-            const studentName = document.getElementById('studentName').value.trim();
-            const errorElement = document.getElementById('codeError');
-            
-            if (accessCode === '27') {
-                // Код вірний, можна продовжувати
-                errorElement.style.display = 'none';
-                alert(`Вітаємо, ${studentName}! Тестування розпочнеться зараз.`);
-                // Тут можна додати перенаправлення на сторінку з тестом
-                // window.location.href = 'test.html';
-            } else {
-                // Невірний код
-                errorElement.style.display = 'block';
-            }
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>НМТ з історії України - Питання 1/30</title>
-    <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
         }
-        .header {
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .start-screen {
+            text-align: center;
+        }
+        
+        .start-screen h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .test-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            background-color: #0057b7;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-        }
-        h1 {
-            color: #0057b7;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .progress-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .progress-bar {
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            flex-grow: 1;
-            margin: 0 10px;
-        }
-        .progress {
-            height: 100%;
-            width: 3.33%; /* 1/30 */
-            background-color: #ffd700;
-            border-radius: 5px;
-        }
-        .question-container {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .question-text {
-            font-size: 18px;
-            margin-bottom: 25px;
             padding: 15px;
-            background-color: #f0f7ff;
-            border-left: 4px solid #0057b7;
-            border-radius: 4px;
+            background: #f8f9fa;
+            border-radius: 10px;
         }
+        
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .question-counter {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+        }
+        
+        .question h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.3em;
+        }
+        
         .options {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
         }
+        
         .option {
-            padding: 15px;
+            display: flex;
+            align-items: center;
+            padding: 12px;
             border: 2px solid #ddd;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
         }
+        
         .option:hover {
-            border-color: #0057b7;
-            background-color: #f0f7ff;
+            background: #f8f9fa;
+            border-color: #667eea;
         }
+        
         .option.selected {
-            background-color: #0057b7;
-            color: white;
-            border-color: #0057b7;
+            background: #e3f2fd;
+            border-color: #2196f3;
         }
+        
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .matching-question {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .matching-item {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .matching-options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .match-btn {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .match-btn.selected {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .sequence-question {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .sequence-items {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .sequence-item {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .sequence-item.dragging {
+            opacity: 0.5;
+        }
+        
+        .multiple-choice {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-option:hover {
+            background: #f8f9fa;
+        }
+        
+        .checkbox-option.selected {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+        }
+        
         .navigation {
             display: flex;
-            justify-content: space-between;
+            gap: 10px;
             margin-top: 30px;
         }
-        button {
-            background-color: #0057b7;
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .results {
+            text-align: center;
+        }
+        
+        .score {
+            font-size: 3em;
+            color: #28a745;
+            margin: 20px 0;
+        }
+        
+        .analysis-btn {
+            background: #17a2b8;
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            margin: 10px;
         }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+        
+        .analysis {
+            text-align: left;
         }
-        button:hover:not(:disabled) {
-            background-color: #004494;
+        
+        .question-analysis {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            background: #f8f9fa;
         }
-        .timer {
-            font-weight: bold;
-            font-size: 18px;
+        
+        .correct {
+            color: #28a745;
         }
-        .question-number {
-            font-weight: bold;
+        
+        .incorrect {
+            color: #dc3545;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="question-number">Питання 1 з 30</div>
-        <div class="timer">Час: <span id="time">60:00</span></div>
+    <div class="container">
+        <div id="startScreen" class="card start-screen">
+            <h1>НМТ з історії України</h1>
+            <div class="input-group">
+                <label for="studentName">Введіть ваше ім'я:</label>
+                <input type="text" id="studentName" placeholder="Ваше ім'я">
+            </div>
+            <div class="input-group">
+                <label for="accessCode">Спеціальний код:</label>
+                <input type="text" id="accessCode" placeholder="Код доступу">
+            </div>
+            <button class="btn" onclick="startTest()">Розпочати тестування</button>
+        </div>
+
+        <div id="testScreen" class="card" style="display: none;">
+            <div class="test-header">
+                <div class="question-counter">
+                    Питання <span id="currentQuestion">1</span> з <span id="totalQuestions">30</span>
+                </div>
+                <div class="timer" id="timer">60:00</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div id="questionContainer"></div>
+            
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn">Попереднє</button>
+                <button class="btn" onclick="nextQuestion()" id="nextBtn">Наступне</button>
+                <button class="btn" onclick="finishTest()" id="finishBtn" style="display: none;">Завершити тестування</button>
+            </div>
+        </div>
+
+        <div id="resultsScreen" class="card" style="display: none;">
+            <div class="results">
+                <h2>Результати тестування</h2>
+                <div class="score" id="finalScore"></div>
+                <p id="scoreText"></p>
+                <button class="analysis-btn" onclick="showAnalysis()">Аналітика</button>
+                <button class="btn" onclick="restartTest()">Пройти знову</button>
+            </div>
+        </div>
+
+        <div id="analysisScreen" class="card analysis" style="display: none;">
+            <h2>Детальна аналітика</h2>
+            <div id="analysisContent"></div>
+            <button class="btn" onclick="showResults()">Повернутися до результатів</button>
+        </div>
     </div>
 
-    <div class="progress-container">
-        <div>Прогрес:</div>
-        <div class="progress-bar">
-            <div class="progress"></div>
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Підтвердження</h3>
+            <p>Чи дійсно ви хочете завершити тестування?</p>
+            <button class="btn" onclick="confirmFinish()">Так</button>
+            <button class="btn btn-secondary" onclick="closeModal()">Ні</button>
         </div>
-        <div>3%</div>
-    </div>
-    
-    <h1>НМТ з історії України</h1>
-    
-    <div class="question-container">
-        <div class="question-text">
-            Прочитайте уривок джерела. «Ми, Сигізмунд Август, даною грамотою оголошуємо таке: на скликаному цьому сеймі закінчити справу [об'єднання] між князівством Литовським та королівством Польським у братерській любові й за згодою обох народів...» В уривку йдеться про укладення
-        </div>
-        
-        <div class="options" id="options">
-            <div class="option" data-value="A">А. Кревської унії.</div>
-            <div class="option" data-value="B">Б. Берестейської унії.</div>
-            <div class="option" data-value="C">В. Городельської унії.</div>
-            <div class="option" data-value="D">Г. Люблінської унії.</div>
-        </div>
-    </div>
-    
-    <div class="navigation">
-        <button disabled id="prevBtn">← Попереднє</button>
-        <button id="nextBtn">Наступне →</button>
     </div>
 
     <script>
-        // Таймер на 60 хвилин
-        let timeLeft = 60 * 60; // 60 хвилин у секундах
-        const timerElement = document.getElementById('time');
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let timeRemaining = 3600; // 60 minutes
+        let timerInterval;
+        let studentName = '';
         
-        function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                alert("Час вийшов! Тест буде автоматично завершено.");
-                // Тут можна додати логіку завершення тесту
+        const questions = [
+            {
+                type: 'single',
+                question: 'Прочитайте уривок джерела. «Ми, Сигізмунд Август, даною грамотою оголошуємо таке: на скликаному цьому сеймі закінчити справу [об\'єднання] між князівством Литовським та королівством Польським у братерській любові й за згодою обох народів…» В уривку йдеться про укладення',
+                options: ['Кревської унії', 'Берестейської унії', 'Городельської унії', 'Люблінської унії'],
+                correct: 3
+            },
+            {
+                type: 'single',
+                question: 'На фото зображено пам\'ятну монету серії «Видатні особистості України». Укажіть ім\'я діяча, що має бути викарбуване на реверсі монети.',
+                options: ['Петро Могила', 'Феофан Прокопович', 'Мелетій Смотрицький', 'Іов Борецький'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'Коли було укладено угоду, уривок якої наведено: «Воєнні дії між Московською державою і Річчю Посполитою припинялися...»?',
+                options: ['1649 р.', '1651 р.', '1654 р.', '1656 р.'],
+                correct: 3
+            },
+            {
+                type: 'single',
+                question: 'На допомогу якої держави покладався гетьман Петро Дорошенко в боротьбі за збереження єдності України?',
+                options: ['Османської імперії', 'Трансільванського князівства', 'Московського царства', 'Шведського королівства'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'Після ліквідації Української козацької держави переважна частина козацької старшини',
+                options: ['виїхала за кордон, створивши потужну політичну еміграцію', 'стала основою антиросійського повстанського руху', 'була інтегрована до російського привілейованого стану – дворянства', 'була винищена внаslідок репресивних заходів'],
+                correct: 2
+            },
+            {
+                type: 'single',
+                question: 'Що об\'єднує будівлі, зображені на фото?',
+                options: ['побудовані в одному архітектурному стилі', 'пов\'язані з іменами діячів козацької доби', 'споруджені в одному місті', 'спроєктовані одним архітектором'],
+                correct: 1
+            },
+            {
+                type: 'single',
+                question: '«Започатковано видання першої української газети, …скликано Собор руських учених...» Яка подія створила передумови для описаних змін?',
+                options: ['«Весна народів»', 'виступ декабристів', 'польське повстання 1830–1831 рр.', 'заснування Кирило-Мефодіївського братства'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'Предмети, зображені на фото, є частиною музейної експозиції, присвяченої',
+                options: ['Борису Грінченку', 'Володимиру Антоновичу', 'Михайлу Драгоманову', 'Павлу Чубинському'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: '«Ми, свідомі Українці, рішуче й назавжди пориваємо зв\'язок з українофілами...» В уривку йдеться про діяльність',
+                options: ['Братства тарасівців', 'Товариства українських поступовців', 'Революційної української партії', 'Головної руської ради'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'Головою організації, що видавала журнал, фрагмент палітурки якого зображено на фото, був',
+                options: ['С. Петлюра', 'М. Міхновський', 'Д. Донцов', 'І. Шраг'],
+                correct: 2
+            },
+            {
+                type: 'single',
+                question: 'Однією з причин падіння Української Центральної Ради (УЦР) була',
+                options: ['відмова УЦР від виконання умов Брест-Литовського мирного договору', 'відкрита підтримка УЦР селянських виступів і робітничих страйків', 'проведена УЦР аграрна реформа та передання всієї землі селянам', 'неспроможність УЦР налагодити систему державного управління'],
+                correct: 3
+            },
+            {
+                type: 'single',
+                question: 'Яке положення Варшавської угоди викликало вкрай різку й негативну реакцію громадських і політичних кіл Східної Галичини?',
+                options: ['Визнання Директорії УНР', 'Визначення кордонів між Польщею і УНР', 'Зобов\'язання не укладати договорів проти один одного', 'Забезпечення прав національних меншин'],
+                correct: 1
+            },
+            {
+                type: 'single',
+                question: 'Який з наведених фрагментів газетних шпальт є наочним прикладом застосування репресивного інструмента механізму Голодомору?',
+                options: ['Варіант А', 'Варіант Б', 'Варіант В', 'Варіант Г'],
+                correct: 1
+            },
+            {
+                type: 'single',
+                question: '«На Волині та Поліссі протягом п\'яти років осаджено понад 8 тисяч родин військових...» Уряд якої країни уживав таких заходів?',
+                options: ['Румунії', 'Чехословаччини', 'Польщі', 'Угорщини'],
+                correct: 2
+            },
+            {
+                type: 'single',
+                question: 'З діяльністю ОУН у роки Другої світової війни пов\'язано',
+                options: ['створення «похідних груп»', 'проведення «рейкової війни»', 'здійснення «Карпатського рейду»', 'формування підрозділів «чорносвитників»'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'На території, виділеній на картосхемі червоним кольором, у 1947 р. радянськими каральними органами було проведено операцію',
+                options: ['«Захід»', '«Вісла»', '«Хвиля»', '«Кордон»'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'Про активізацію дисидентського руху в Україні в другій половині 1970-х рр. свідчить',
+                options: ['створення Української робітничо-селянської спілки', 'поява праці І. Дзюби «Інтернаціоналізм чи русифікація?»', 'організація клубів творчої молоді', 'діяльність Української громадської групи сприяння виконанню Гельсінських угод'],
+                correct: 3
+            },
+            {
+                type: 'single',
+                question: 'На карикатурі відображено',
+                options: ['проблеми реалізації курсу на перебудову', 'головний здобуток перебудови', 'успішність процесу перебудови', 'незмінність курсу на перебудову'],
+                correct: 0
+            },
+            {
+                type: 'single',
+                question: 'Яке питання мало бути розглянуто на референдумі, запропоновано І. Юхновським?',
+                options: ['запровадження посади Президента України', 'підтвердження Акта проголошення незалежності України', 'усенародне ухвалення Конституції України', 'визнання територіальної цілісності України'],
+                correct: 1
+            },
+            {
+                type: 'single',
+                question: 'На фото відображено події',
+                options: ['Революції троянд', 'Революції Гідності', 'Революції на граніті', 'Помаранчевої революції'],
+                correct: 1
+            },
+            {
+                type: 'matching',
+                question: 'Узгодьте назву воєводства Речі Посполитої з його теренами',
+                items: ['Подільське', 'Київське', 'Волинське', 'Брацлавське'],
+                options: ['А', 'Б', 'В', 'Г', 'Д'],
+                correct: [4, 2, 1, 3] // Д, В, Б, Г
+            },
+            {
+                type: 'matching',
+                question: 'Установіть відповідність між фактами біографії та іменем діяча',
+                items: [
+                    'громадський діяч, учений, ініціатор заснування Харківського університету',
+                    'історик, поет-романтик, викладач історії в Київському університеті',
+                    'прозаїк і драматург, засновник жанру соціально-побутової комедії',
+                    'греко-католицький священник, громадський діяч, просвітник'
+                ],
+                options: ['Григорій Квітка-Основ\'яненко', 'Олександр Духнович', 'Василь Каразін', 'Микола Костомаров', 'Маркіян Шашкевич'],
+                correct: [2, 3, 0, 1] // В, Г, А, Б
+            },
+            {
+                type: 'matching',
+                question: 'Узгодьте подію з її наслідком',
+                items: [
+                    'проведення в Києві Всеукраїнського з\'їзду хліборобів',
+                    'оприлюднення Першого Універсалу',
+                    'збройна боротьба за владу в Києві',
+                    'ультиматум Раднаркому РСФРР'
+                ],
+                options: ['збройна агресія радянської Росії проти УНР', 'створення Генерального секретаріату', 'прихід до влади гетьмана П. Скоропадського', 'корніловський заколот у Росії', 'проголошення УНР'],
+                correct: [2, 1, 4, 0] // В, Б, Д, А
+            },
+            {
+                type: 'matching',
+                question: 'Визначте авторство зображених картин',
+                items: ['Т. Яблонська', 'М. Самокиш', 'К. Білокур', 'Ф. Кричевський'],
+                options: ['А', 'Б', 'В', 'Г', 'Д'],
+                correct: [1, 3, 2, 4] // Б, Г, В, Д
+            },
+            {
+                type: 'sequence',
+                question: 'Установіть послідовність подій Національно-визвольної війни українського народу середини ХVІІ ст.',
+                items: [
+                    'похід козацького корпусу під проводом наказного гетьмана Антіна Ждановича в Польщу',
+                    'похід козацького війська в Молдавію, який завершився поразкою під Сучавою',
+                    'похід козацько-татарського війська на Галичину, узяття в облогу Львова й Замостя',
+                    'похід козацько-татарського війська на Волинь, який завершився поразкою під Берестечком'
+                ],
+                correct: [2, 3, 1, 0] // В, Г, Б, А
+            },
+            {
+                type: 'sequence',
+                question: 'Розташуйте фрагменти перших шпальт номерів газет в послідовності виходу їх друком',
+                items: ['А', 'Б', 'В', 'Г'],
+                correct: [1, 0, 2, 3] // Б, А, В, Г
+            },
+            {
+                type: 'sequence',
+                question: 'Установіть послідовність подій',
+                items: [
+                    'Критика українських письменників М. Підгорним',
+                    'Створення Народного Руху України',
+                    'Критика журналу "Вітчизна"',
+                    'Лист В. Чорновола'
+                ],
+                correct: [2, 0, 3, 1] // В, А, Г, Б
+            },
+            {
+                type: 'multiple',
+                question: 'Що із зазначеного є прикладом культурного життя на українських землях у другій половині XVI ст.?',
+                options: [
+                    'заснування Києво-Могилянської колегії',
+                    'створення Пересопницького Євангелія',
+                    'заснування в Острозі слов\'яно-греко-латинської академії',
+                    'створення козацьких літописів',
+                    'заснування Глухівської співочої школи',
+                    'видання у Львові І. Федоровичем «Апостола» та «Букваря»'
+                ],
+                correct: [1, 2, 5] // Б, В, Е
+            },
+            {
+                type: 'multiple',
+                question: 'Укажіть результати боротьби українського національного руху на західноукраїнських землях на початку XX ст.',
+                options: [
+                    'поява покоління «будителів» у Східній Галичині',
+                    'охоплення всього краю мережею культурно-освітніх і кооперативних організацій',
+                    'створення осередків спортивно-пожежних товариств «Сокіл», «Січ»',
+                    'відкриття у Львові окремого українського університету',
+                    'упровадження загального виборчого права для чоловіків',
+                    'об\'єднання Східної Галичини, Північної Буковини та Закарпаття'
+                ],
+                correct: [1, 2, 4] // Б, В, Д
+            },
+            {
+                type: 'multiple',
+                question: 'Укажіть факти біографії зображеного історичного діяча',
+                options: [
+                    'Наприкінці ХІХ ст. був одним з організаторів сокільсько-стрілецького руху',
+                    'Професор, перший очільник кафедри історії України',
+                    'У роки Першої світової війни воював у лавах легіону УСС',
+                    'Був полковником Армії УНР',
+                    'Автор книги «Україна irredenta»',
+                    'Ініціатор створення ОУН'
+                ],
+                correct: [2, 3, 5] // В, Г, Е
             }
-            timeLeft--;
-        }
-        
-        const timerInterval = setInterval(updateTimer, 1000);
-        updateTimer(); // Запускаємо одразу
+        ];
 
-        // Обробник вибору відповіді
-        const options = document.querySelectorAll('.option');
-        let selectedOption = null;
-        
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                // Знімаємо виділення з попереднього вибору
-                if (selectedOption) {
-                    selectedOption.classList.remove('selected');
-                }
-                
-                // Додаємо виділення до поточного вибору
-                this.classList.add('selected');
-                selectedOption = this;
-                
-                // Зберігаємо вибір
-                localStorage.setItem('question1', this.dataset.value);
-            });
-        });
-        
-        // Перевіряємо, чи був зроблений вибір раніше
-        const savedAnswer = localStorage.getItem('question1');
-        if (savedAnswer) {
-            const previouslySelected = document.querySelector(`.option[data-value="${savedAnswer}"]`);
-            if (previouslySelected) {
-                previouslySelected.classList.add('selected');
-                selectedOption = previouslySelected;
-            }
-        }
-        
-        // Обробник кнопки "Наступне"
-        document.getElementById('nextBtn').addEventListener('click', function() {
-            if (!selectedOption) {
-                alert('Будь ласка, оберіть варіант відповіді!');
+        function startTest() {
+            const name = document.getElementById('studentName').value.trim();
+            const code = document.getElementById('accessCode').value.trim();
+            
+            if (!name) {
+                alert('Будь ласка, введіть ваше ім\'я');
                 return;
             }
             
-            // Тут можна додати перехід до наступного питання
-            // Наприклад: window.location.href = 'question2.html';
-            console.log('Відповідь збережено:', selectedOption.dataset.value);
-            alert('Відповідь збережено! Перехід до наступного питання.');
-        });
-    </script>
-</body>
-</html>
+            if (code !== '27') {
+                alert('Невірний код доступу');
+                return;
+            }
+            
+            studentName = name;
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'block';
+            document.getElementById('totalQuestions').textContent = questions.length;
+            
+            // Initialize answers array
+            userAnswers = new Array(questions.length).fill(null);
+            
+            // Start timer
+            startTimer();
+            
+            // Show first question
+            showQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishTest(true);
+                }
+            }, 1000);
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            updateProgress();
+            
+            let html = `<div class="question">
+                <h3>${currentQuestionIndex + 1}. ${question.question}</h3>`;
+            
+            if (question.type === 'single') {
+                html += '<div class="options">';
+                question.options.forEach((option, index) => {
+                    const isSelected = userAnswers[currentQuestionIndex] === index;
+                    html += `
+                        <div class="option ${isSelected ? 'selected' : ''}" onclick="selectSingleAnswer(${index})">
