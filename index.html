@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система онлайн тестування</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .dashboard {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 250px;
+            padding: 30px 20px;
+            color: white;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .sidebar button.active {
+            background: rgba(255,255,255,0.4);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .option-input {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-item {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff4757;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .result-summary {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .correct {
+            background: #d4edda !important;
+            border-left-color: #28a745 !important;
+        }
+
+        .incorrect {
+            background: #f8d7da !important;
+            border-left-color: #dc3545 !important;
+        }
+
+        .student-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .analytics-card {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .login-toggle {
+            margin-top: 20px;
+        }
+
+        .test-access {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Головна сторінка (Авторизація) -->
+    <div id="loginPage" class="container">
+        <h1>Система онлайн тестування</h1>
+        
+        <div id="registrationForm">
+            <h2>Реєстрація</h2>
+            
+            <div class="form-group">
+                <label>Тип користувача:</label>
+                <select id="userType">
+                    <option value="">Оберіть тип</option>
+                    <option value="teacher">Вчитель</option>
+                    <option value="student">Учень</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Електронна адреса:</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <button onclick="sendVerificationCode()">Зареєструватися</button>
+        </div>
+
+        <div id="verificationForm" class="hidden">
+            <h2>Підтвердження</h2>
+            <p>Код підтвердження відправлено на вашу електронну адресу</p>
+            
+            <div class="form-group">
+                <label for="verificationCode">Код підтвердження:</label>
+                <input type="text" id="verificationCode" required>
+            </div>
+
+            <button onclick="verifyCode()">Підтвердити</button>
+        </div>
+
+        <div id="loginForm" class="hidden">
+            <h2>Вхід</h2>
+            
+            <div class="form-group">
+                <label for="loginEmail">Електронна адреса:</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Пароль:</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+
+            <button onclick="login()">Увійти</button>
+        </div>
+
+        <div class="login-toggle">
+            <button onclick="toggleLoginForm()">Увійти</button>
+            <button onclick="showRegistration()">Реєстрація</button>
+        </div>
+    </div>
+
+    <!-- Панель вчителя -->
+    <div id="teacherDashboard" class="dashboard hidden">
+        <div class="sidebar">
+            <h2>Панель вчителя</h2>
+            <button onclick="showCreateTest()" class="active">Створити тестування</button>
+            <button onclick="showTestAnalytics()">Аналітика тестувань</button>
+            <button onclick="showStudentManagement()">Учні</button>
+            <button onclick="logout()">Вийти</button>
+        </div>
+
+        <div class="main-content">
+            <!-- Створення тесту -->
+            <div id="createTestSection">
+                <h2>Створення тестування</h2>
+                
+                <div class="form-group">
+                    <label for="testTitle">Назва тесту:</label>
+                    <input type="text" id="testTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="testCode">Код доступу:</label>
+                    <input type="text" id="testCode" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="testTimer">Час на виконання (хвилини):</label>
+                    <input type="number" id="testTimer" min="1" value="30">
+                </div>
+
+                <div id="questionsContainer">
+                    <h3>Питання</h3>
+                </div>
+
+                <button onclick="addQuestion()">Додати питання</button>
+                <button onclick="saveTest()">Зберегти тест</button>
+
+                <div id="testsList">
+                    <h3>Створені тести</h3>
+                    <div id="testsContainer"></div>
+                </div>
+            </div>
+
+            <!-- Аналітика тестувань -->
+            <div id="analyticsSection" class="hidden">
+                <h2>Аналітика тестувань</h2>
+                <div id="analyticsContainer"></div>
+            </div>
+
+            <!-- Управління учнями -->
+            <div id="studentManagementSection" class="hidden">
+                <h2>Управління учнями</h2>
+                
+                <div class="form-group">
+                    <label for="studentName">Ім'я учня:</label>
+                    <input type="text" id="studentName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentEmail">Email учня:</label>
+                    <input type="email" id="studentEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="assignTest">Призначити тест:</label>
+                    <select id="assignTest">
+                        <option value="">Оберіть тест</option>
+                    </select>
+                </div>
+
+                <button onclick="addStudent()">Додати учня</button>
+
+                <div id="studentsList">
+                    <h3>Список учнів</h3>
+                    <div id="studentsContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Панель учня -->
+    <div id="studentDashboard" class="dashboard hidden">
+        <div class="sidebar">
+            <h2>Панель учня</h2>
+            <button onclick="showStudentTests()" class="active">Ваші тестування</button>
+            <button onclick="showTestAccess()">Увійти за кодом</button>
+            <button onclick="logout()">Вийти</button>
+        </div>
+
+        <div class="main-content">
+            <!-- Тести учня -->
+            <div id="studentTestsSection">
+                <h2>Ваші тестування</h2>
+                <div id="studentTestsContainer"></div>
+            </div>
+
+            <!-- Доступ до тесту за кодом -->
+            <div id="testAccessSection" class="hidden">
+                <h2>Доступ до тестування</h2>
+                
+                <div class="test-access">
+                    <div class="form-group">
+                        <label for="accessCode">Код доступу:</label>
+                        <input type="text" id="accessCode" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentNameInput">Ваше ім'я:</label>
+                        <input type="text" id="studentNameInput" required>
+                    </div>
+
+                    <button onclick="accessTestByCode()">Розпочати тестування</button>
+                </div>
+            </div>
+
+            <!-- Проходження тесту -->
+            <div id="testTakingSection" class="hidden">
+                <div id="timerDisplay" class="timer hidden"></div>
+                <h2 id="currentTestTitle"></h2>
+                <div id="testQuestionsContainer"></div>
+                <button onclick="submitTest()">Завершити тестування</button>
+            </div>
+
+            <!-- Результати тесту -->
+            <div id="testResultsSection" class="hidden">
+                <h2>Результати тестування</h2>
+                <div id="resultsContainer"></div>
+                <button onclick="showStudentTests()">Повернутися до списку тестів</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Глобальні змінні (дані зберігаються в пам'яті)
+        let currentUser = null;
+        let users = [];
+        let tests = [];
+        let students = [];
+        let testResults = [];
+        let currentTest = null;
+        let currentTestTimer = null;
+        let questionCounter = 0;
+
+        // Функції авторизації
+        function sendVerificationCode() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+
+            if (!email || !password || !userType) {
+                alert('Заповніть всі поля');
+                return;
+            }
+
+            // Імітація відправки коду
+            const verificationCode = Math.floor(100000 + Math.random() * 900000);
+            window.tempVerificationCode = verificationCode;
+            window.tempUserData = { email, password, userType };
+
+            alert(`Код підтвердження: ${verificationCode} (у реальній системі буде відправлено на email)`);
+
+            document.getElementById('registrationForm').classList.add('hidden');
+            document.getElementById('verificationForm').classList.remove('hidden');
+        }
+
+        function verifyCode() {
+            const enteredCode = document.getElementById('verificationCode').value;
+            const storedCode = window.tempVerificationCode;
+
+            if (enteredCode == storedCode) {
+                const userData = window.tempUserData;
+                
+                // Зберігаємо користувача
+                users.push(userData);
+
+                currentUser = userData;
+                showDashboard(userData.userType);
+            } else {
+                alert('Невірний код підтвердження');
+            }
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                showDashboard(user.userType);
+            } else {
+                alert('Невірні дані для входу');
+            }
+        }
+
+        function toggleLoginForm() {
+            document.getElementById('registrationForm').classList.add('hidden');
+            document.getElementById('verificationForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        }
+
+        function showRegistration() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('verificationForm').classList.add('hidden');
+            document.getElementById('registrationForm').classList.remove('hidden');
+        }
+
+        function showDashboard(userType) {
+            document.getElementById('loginPage').classList.add('hidden');
+            
+            if (userType === 'teacher') {
+                document.getElementById('teacherDashboard').classList.remove('hidden');
+                loadTeacherData();
+            } else {
+                document.getElementById('studentDashboard').classList.remove('hidden');
+                loadStudentData();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('studentDashboard').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            showRegistration();
+        }
+
+        // Функції вчителя
+        function loadTeacherData() {
+            displayTests();
+            updateAssignTestOptions();
+        }
+
+        function showCreateTest() {
+            document.getElementById('createTestSection').classList.remove('hidden');
+            document.getElementById('analyticsSection').classList.add('hidden');
+            document.getElementById('studentManagementSection').classList.add('hidden');
+        }
+
+        function showTestAnalytics() {
+            document.getElementById('createTestSection').classList.add('hidden');
+            document.getElementById('analyticsSection').classList.remove('hidden');
+            document.getElementById('studentManagementSection').classList.add('hidden');
+            loadAnalytics();
+        }
+
+        function showStudentManagement() {
+            document.getElementById('createTestSection').classList.add('hidden');
+            document.getElementById('analyticsSection').classList.add('hidden');
+            document.getElementById('studentManagementSection').classList.remove('hidden');
+            displayStudents();
+        }
+
+        function addQuestion() {
+            questionCounter++;
+            const container = document.getElementById('questionsContainer');
+            
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-item';
+            questionDiv.innerHTML = `
+                <div class="form-group">
+                    <label>Питання ${questionCounter}:</label>
+                    <textarea rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Тип питання:</label>
+                    <select onchange="updateQuestionType(${questionCounter}, this.value)">
+                        <option value="single">Одинична відповідь</option>
+                        <option value="multiple">Декілька правильних варіантів</option>
+                        <option value="matching">Встановлення відповідності</option>
+                        <option value="fill">Заповлення пропуску</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Бали за питання:</label>
+                    <input type="number" min="1" value="1">
+                </div>
+                
+                <div id="options-${questionCounter}" class="options-container">
+                    <div class="option-input">
+                        <input type="radio" name="correct-${questionCounter}" value="0">
+                        <input type="text" placeholder="Варіант відповіді 1">
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct-${questionCounter}" value="1">
+                        <input type="text" placeholder="Варіант відповіді 2">
+                    </div>
+                </div>
+                
+                <button type="button" onclick="addOption(${questionCounter})">Додати варіант</button>
+                <button type="button" onclick="removeQuestion(this)">Видалити питання</button>
+            `;
+            
+            container.appendChild(questionDiv);
+        }
+
+        function updateQuestionType(questionNum, type) {
+            const optionsContainer = document.getElementById(`options-${questionNum}`);
+            
+            if (type === 'fill') {
+                optionsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label>Правильна відповідь:</label>
+                        <input type="text" placeholder="Введіть правильну відповідь">
+                    </div>
+                `;
+            } else if (type === 'matching') {
+                optionsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label>Пари для встановлення відповідності:</label>
+                        <div class="matching-pairs">
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" placeholder="Елемент А">
+                                <input type="text" placeholder="Елемент Б">
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" placeholder="Елемент А">
+                                <input type="text" placeholder="Елемент Б">
+                            </div>
+                        </div>
+                        <button type="button" onclick="addMatchingPair(this)">Додати пару</button>
+                    </div>
+                `;
+            } else {
+                const inputType = type === 'multiple' ? 'checkbox' : 'radio';
+                optionsContainer.innerHTML = `
+                    <div class="option-input">
+                        <input type="${inputType}" name="correct-${questionNum}" value="0">
+                        <input type="text" placeholder="Варіант відповіді 1">
+                    </div>
+                    <div class="option-input">
+                        <input type="${inputType}" name="correct-${questionNum}" value="1">
+                        <input type="text" placeholder="Варіант відповіді 2">
+                    </div>
+                `;
+            }
+        }
+
+        function addOption(questionNum) {
+            const container = document.getElementById(`options-${questionNum}`);
+            const optionCount = container.children.length;
+            
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option-input';
+            optionDiv.innerHTML = `
+                <input type="radio" name="correct-${questionNum}" value="${optionCount}">
+                <input type="text" placeholder="Варіант відповіді ${optionCount + 1}">
+            `;
+            
+            container.appendChild(optionDiv);
+        }
+
+        function addMatchingPair(button) {
+            const container = button.parentElement.querySelector('.matching-pairs');
+            const pairDiv = document.createElement('div');
+            pairDiv.style.display = 'flex';
+            pairDiv.style.gap = '10px';
+            pairDiv.style.marginBottom = '10px';
+            pairDiv.innerHTML = `
+                <input type="text" placeholder="Елемент А">
+                <input type="text" placeholder="Елемент Б">
+            `;
+            container.appendChild(pairDiv);
+        }
+
+        function removeQuestion(button) {
+            button.parentElement.remove();
+        }
+
+        function saveTest() {
+            const title = document.getElementById('testTitle').value;
+            const code = document.getElementById('testCode').value;
+            const timer = parseInt(document.getElementById('testTimer').value);
+
+            if (!title || !code) {
+                alert('Введіть назву та код тесту');
+                return;
+            }
+
+            const questions = [];
+            const questionItems = document.querySelectorAll('.question-item');
+
+            questionItems.forEach((item, index) => {
+                const questionText = item.querySelector('textarea').value;
+                const questionType = item.querySelector('select').value;
+                const points = parseInt(item.querySelector('input[type="number"]').value);
+
+                if (!questionText) return;
+
+                const question = {
+                    id: index + 1,
+                    text: questionText,
+                    type: questionType,
+                    points: points
+                };
+
+                if (questionType === 'fill') {
+                    question.correctAnswer = item.querySelector('input[type="text"]').value;
+                } else if (questionType === 'matching') {
+                    const pairs = [];
+                    const pairInputs = item.querySelectorAll('.matching-pairs > div');
+                    pairInputs.forEach(pair => {
+                        const inputs = pair.querySelectorAll('input');
+                        if (inputs[0].value && inputs[1].value) {
+                            pairs.push([inputs[0].value, inputs[1].value]);
+                        }
+                    });
+                    question.pairs = pairs;
+                } else {
+                    const options = [];
+                    const correctAnswers = [];
+                    const optionInputs = item.querySelectorAll('.option-input');
+                    
+                    optionInputs.forEach((optionDiv, optIndex) => {
+                        const text = optionDiv.querySelector('input[type="text"]').value;
+                        const isCorrect = optionDiv.querySelector('input[type="radio"], input[type="checkbox"]').checked;
+                        
+                        if (text) {
+                            options.push(text);
+                            if (isCorrect) {
+                                correctAnswers.push(optIndex);
+                            }
+                        }
+                    });
+                    
+                    question.options = options;
+                    question.correctAnswers = correctAnswers;
+                }
+
+                questions.push(question);
+            });
+
+            if (questions.length === 0) {
+                alert('Додайте хоча б одне питання');
+                return;
+            }
+
+            const test = {
+                id: Date.now(),
+                title: title,
+                code: code,
+                timer: timer,
+                questions: questions,
+                createdBy: currentUser.email,
+                createdAt: new Date().toLocaleString()
+            };
+
+            tests.push(test);
+
+            alert('Тест успішно створено!');
+            
+            // Очищення форми
+            document.getElementById('testTitle').value = '';
+            document.getElementById('testCode').value = '';
+            document.getElementById('testTimer').value = '30';
+            document.getElementById('questionsContainer').innerHTML = '<h3>Питання</h3>';
+            questionCounter = 0;
+
+            displayTests();
+            updateAssignTestOptions();
+        }
+
+        function displayTests() {
+            const container = document.getElementById('testsContainer');
+            const userTests = tests.filter(test => test.createdBy === currentUser.email);
+
+            container.innerHTML = '';
+
+            userTests.forEach(test => {
+                const testDiv = document.createElement('div');
+                testDiv.className = 'test-item';
+                testDiv.innerHTML = `
+                    <div>
+                        <h4>${test.title}</h4>
+                        <p>Код: ${test.code} | Питань: ${test.questions.length} | Час: ${test.timer} хв</p>
+                        <p>Створено: ${test.createdAt}</p>
+                    </div>
+                    <div>
+                        <button onclick="copyTestLink('${test.code}')">Копіювати посилання</button>
+                        <button onclick="deleteTest(${test.id})">Видалити</button>
+                    </div>
+                `;
+                container.appendChild(testDiv);
+            });
+        }
+
+        function copyTestLink(code) {
+            const link = `${window.location.origin}${window.location.pathname}?test=${code}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Посилання скопійовано в буфер обміну!');
+            });
+        }
+
+        function deleteTest(testId) {
+            if (confirm('Ви впевнені, що хочете видалити цей тест?')) {
+                tests = tests.filter(test => test.id !== testId);
+                displayTests();
+                updateAssignTestOptions();
+            }
+        }
+
+        function addStudent() {
+            const name = document.getElementById('studentName').value;
+            const email = document.getElementById('studentEmail').value;
+            const assignedTest = document.getElementById('assignTest').value;
+
+            if (!name || !email) {
+                alert('Введіть ім\'я та email учня');
+                return;
+            }
+
+            const student = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                assignedTests: assignedTest ? [assignedTest] : [],
+                addedBy: currentUser.email
+            };
+
+            students.push(student);
+
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('assignTest').value = '';
+
+            displayStudents();
+            alert('Учня додано успішно!');
+        }
+
+        function displayStudents() {
+            const container = document.getElementById('studentsContainer');
+            const teacherStudents = students.filter(student => student.addedBy === currentUser.email);
+
+            container.innerHTML = '';
+
+            teacherStudents.forEach(student => {
+                const studentDiv = document.createElement('div');
+                studentDiv.className = 'student-item';
+                studentDiv.innerHTML = `
+                    <div>
+                        <h4>${student.name}</h4>
+                        <p>Email: ${student.email}</p>
+                        <p>Призначено тестів: ${student.assignedTests.length}</p>
+                    </div>
+                    <div>
+                        <button onclick="assignTestToStudent(${student.id})">Призначити тест</button>
+                        <button onclick="removeStudent(${student.id})">Видалити</button>
+                    </div>
+                `;
+                container.appendChild(studentDiv);
+            });
+        }
+
+        function assignTestToStudent(studentId) {
+            const userTests = tests.filter(test => test.createdBy === currentUser.email);
+            if (userTests.length === 0) {
+                alert('У вас немає створених тестів');
+                return;
+            }
+
+            let testOptions = 'Оберіть тест:\n';
+            userTests.forEach((test, index) => {
+                testOptions += `${index + 1}. ${test.title} (${test.code})\n`;
+            });
+
+            const choice = prompt(testOptions);
+            const testIndex = parseInt(choice) - 1;
+
+            if (testIndex >= 0 && testIndex < userTests.length) {
+                const selectedTest = userTests[testIndex];
+                const student = students.find(s => s.id === studentId);
+                
+                if (!student.assignedTests.includes(selectedTest.id)) {
+                    student.assignedTests.push(selectedTest.id);
+                    alert(`Тест "${selectedTest.title}" призначено учню ${student.name}`);
+                    displayStudents();
+                } else {
+                    alert('Цей тест вже призначений учню');
+                }
+            }
+        }
+
+        function removeStudent(studentId) {
+            if (confirm('Ви впевнені, що хочете видалити цього учня?')) {
+                students = students.filter(student => student.id !== studentId);
+                displayStudents();
+            }
+        }
+
+        function updateAssignTestOptions() {
+            const select = document.getElementById('assignTest');
+            const userTests = tests.filter(test => test.createdBy === currentUser.email);
+
+            select.innerHTML = '<option value="">Оберіть тест</option>';
+
+            userTests.forEach(test => {
+                const option = document.createElement('option');
+                option.value = test.id;
+                option.textContent = `${test.title} (${test.code})`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadAnalytics() {
+            const container = document.getElementById('analyticsContainer');
+            const userTests = tests.filter(test => test.createdBy === currentUser.email);
+            const userResults = testResults.filter(result => 
+                userTests.some(test => test.id === result.testId)
+            );
+
+            container.innerHTML = '';
+
+            if (userResults.length === 0) {
+                container.innerHTML = '<p>Поки немає результатів тестування</p>';
+                return;
+            }
+
+            userTests.forEach(test => {
+                const testResults_filtered = userResults.filter(result => result.testId === test.id);
+                
+                if (testResults_filtered.length > 0) {
+                    const analyticsDiv = document.createElement('div');
+                    analyticsDiv.className = 'analytics-card';
+                    
+                    const averageScore = testResults_filtered.reduce((sum, result) => sum + result.percentage, 0) / testResults_filtered.length;
+                    
+                    analyticsDiv.innerHTML = `
+                        <h3>${test.title}</h3>
+                        <p><strong>Кількість спроб:</strong> ${testResults_filtered.length}</p>
+                        <p><strong>Середній результат:</strong> ${averageScore.toFixed(1)}%</p>
+                        <p><strong>Найкращий результат:</strong> ${Math.max(...testResults_filtered.map(r => r.percentage))}%</p>
+                        <p><strong>Найгірший результат:</strong> ${Math.min(...testResults_filtered.map(r => r.percentage))}%</p>
+                        
+                        <h4>Детальні результати:</h4>
+                        ${testResults_filtered.map(result => `
+                            <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 5px;">
+                                <strong>${result.studentName}</strong> - ${result.score}/${result.totalScore} балів (${result.percentage}%)
+                                <br><small>Дата: ${result.completedAt}</small>
+                            </div>
+                        `).join('')}
+                    `;
+                    
+                    container.appendChild(analyticsDiv);
+                }
+            });
+        }
+
+        // Функції учня
+        function loadStudentData() {
+            displayStudentTests();
+        }
+
+        function showStudentTests() {
+            document.getElementById('studentTestsSection').classList.remove('hidden');
+            document.getElementById('testAccessSection').classList.add('hidden');
+            document.getElementById('testTakingSection').classList.add('hidden');
+            document.getElementById('testResultsSection').classList.add('hidden');
+            displayStudentTests();
+        }
+
+        function showTestAccess() {
+            document.getElementById('studentTestsSection').classList.add('hidden');
+            document.getElementById('testAccessSection').classList.remove('hidden');
+            document.getElementById('testTakingSection').classList.add('hidden');
+            document.getElementById('testResultsSection').classList.add('hidden');
+        }
+
+        function displayStudentTests() {
+            const container = document.getElementById('studentTestsContainer');
+            const studentData = students.find(s => s.email === currentUser.email);
+
+            container.innerHTML = '';
+
+            if (!studentData || studentData.assignedTests.length === 0) {
+                container.innerHTML = '<p>У вас немає призначених тестів</p>';
+                return;
+            }
+
+            studentData.assignedTests.forEach(testId => {
+                const test = tests.find(t => t.id === testId);
+                if (test) {
+                    const testDiv = document.createElement('div');
+                    testDiv.className = 'test-item';
+                    
+                    const hasCompleted = testResults.some(result => 
+                        result.testId === test.id && result.studentEmail === currentUser.email
+                    );
+
+                    testDiv.innerHTML = `
+                        <div>
+                            <h4>${test.title}</h4>
+                            <p>Питань: ${test.questions.length} | Час: ${test.timer} хв</p>
+                            <p>Статус: ${hasCompleted ? 'Завершено' : 'Не пройдено'}</p>
+                        </div>
+                        <div>
+                            <button onclick="startAssignedTest(${test.id})" ${hasCompleted ? 'disabled' : ''}>
+                                ${hasCompleted ? 'Пройдено' : 'Розпочати'}
+                            </button>
+                            ${hasCompleted ? `<button onclick="viewTestResult(${test.id})">Переглянути результат</button>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(testDiv);
+                }
+            });
+        }
+
+        function accessTestByCode() {
+            const code = document.getElementById('accessCode').value;
+            const studentName = document.getElementById('studentNameInput').value;
+
+            if (!code || !studentName) {
+                alert('Введіть код доступу та ваше ім\'я');
+                return;
+            }
+
+            const test = tests.find(t => t.code === code);
+            if (!test) {
+                alert('Тест з таким кодом не знайдено');
+                return;
+            }
+
+            startTest(test, studentName);
+        }
+
+        function startAssignedTest(testId) {
+            const test = tests.find(t => t.id === testId);
+            const studentData = students.find(s => s.email === currentUser.email);
+            
+            if (test && studentData) {
+                startTest(test, studentData.name);
+            }
+        }
+
+        function startTest(test, studentName) {
+            currentTest = test;
+            currentTest.studentName = studentName;
+            
+            document.getElementById('studentTestsSection').classList.add('hidden');
+            document.getElementById('testAccessSection').classList.add('hidden');
+            document.getElementById('testTakingSection').classList.remove('hidden');
+            document.getElementById('testResultsSection').classList.add('hidden');
+
+            document.getElementById('currentTestTitle').textContent = test.title;
+            
+            // Запуск таймера
+            if (test.timer > 0) {
+                let timeLeft = test.timer * 60; // в секундах
+                const timerDisplay = document.getElementById('timerDisplay');
+                timerDisplay.classList.remove('hidden');
+                
+                currentTestTimer = setInterval(() => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (timeLeft <= 0) {
+                        alert('Час вичерпано!');
+                        submitTest();
+                        return;
+                    }
+                    
+                    timeLeft--;
+                }, 1000);
+            }
+
+            displayTestQuestions();
+        }
+
+        function displayTestQuestions() {
+            const container = document.getElementById('testQuestionsContainer');
+            container.innerHTML = '';
+
+            currentTest.questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                
+                let questionHTML = `
+                    <h4>Питання ${index + 1} (${question.points} ${question.points === 1 ? 'бал' : 'балів'})</h4>
+                    <p>${question.text}</p>
+                `;
+
+                if (question.type === 'single') {
+                    questionHTML += '<div>';
+                    question.options.forEach((option, optIndex) => {
+                        questionHTML += `
+                            <label style="display: block; margin: 10px 0;">
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `;
+                    });
+                    questionHTML += '</div>';
+                } else if (question.type === 'multiple') {
+                    questionHTML += '<div>';
+                    question.options.forEach((option, optIndex) => {
+                        questionHTML += `
+                            <label style="display: block; margin: 10px 0;">
+                                <input type="checkbox" name="q${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `;
+                    });
+                    questionHTML += '</div>';
+                } else if (question.type === 'fill') {
+                    questionHTML += `
+                        <div>
+                            <input type="text" name="q${index}" placeholder="Введіть відповідь" style="margin-top: 10px;">
+                        </div>
+                    `;
+                } else if (question.type === 'matching') {
+                    const shuffledB = [...question.pairs.map(pair => pair[1])].sort(() => Math.random() - 0.5);
+                    questionHTML += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">';
+                    questionHTML += '<div><h5>Колонка А:</h5>';
+                    question.pairs.forEach((pair, pairIndex) => {
+                        questionHTML += `<p>${pairIndex + 1}. ${pair[0]}</p>`;
+                    });
+                    questionHTML += '</div><div><h5>Колонка Б:</h5>';
+                    shuffledB.forEach((item, itemIndex) => {
+                        questionHTML += `<p>${String.fromCharCode(65 + itemIndex)}. ${item}</p>`;
+                    });
+                    questionHTML += '</div></div>';
+                    questionHTML += '<div style="margin-top: 15px;"><label>Ваша відповідь (наприклад: 1А, 2Б, 3В):</label>';
+                    questionHTML += `<input type="text" name="q${index}" placeholder="1А, 2Б, 3В..." style="margin-top: 5px;"></div>`;
+                }
+
+                questionDiv.innerHTML = questionHTML;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function submitTest() {
+            if (currentTestTimer) {
+                clearInterval(currentTestTimer);
+                currentTestTimer = null;
+            }
+
+            const answers = [];
+            let totalScore = 0;
+            let earnedScore = 0;
+
+            currentTest.questions.forEach((question, index) => {
+                totalScore += question.points;
+                let userAnswer = null;
+                let isCorrect = false;
+
+                if (question.type === 'single') {
+                    const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                    userAnswer = selectedOption ? parseInt(selectedOption.value) : null;
+                    isCorrect = userAnswer !== null && question.correctAnswers.includes(userAnswer);
+                } else if (question.type === 'multiple') {
+                    const selectedOptions = document.querySelectorAll(`input[name="q${index}"]:checked`);
+                    userAnswer = Array.from(selectedOptions).map(input => parseInt(input.value));
+                    isCorrect = userAnswer.length === question.correctAnswers.length && 
+                               userAnswer.every(ans => question.correctAnswers.includes(ans));
+                } else if (question.type === 'fill') {
+                    const input = document.querySelector(`input[name="q${index}"]`);
+                    userAnswer = input ? input.value.trim().toLowerCase() : '';
+                    isCorrect = userAnswer === question.correctAnswer.toLowerCase();
+                } else if (question.type === 'matching') {
+                    const input = document.querySelector(`input[name="q${index}"]`);
+                    userAnswer = input ? input.value.trim() : '';
+                    // Спрощена перевірка відповідності
+                    isCorrect = userAnswer.length > 0; // Можна додати більш складну логіку перевірки
+                }
+
+                if (isCorrect) {
+                    earnedScore += question.points;
+                }
+
+                answers.push({
+                    questionIndex: index,
+                    userAnswer: userAnswer,
+                    isCorrect: isCorrect
+                });
+            });
+
+            const percentage = totalScore > 0 ? Math.round((earnedScore / totalScore) * 100) : 0;
+
+            const result = {
+                id: Date.now(),
+                testId: currentTest.id,
+                testTitle: currentTest.title,
+                studentName: currentTest.studentName,
+                studentEmail: currentUser.email,
+                score: earnedScore,
+                totalScore: totalScore,
+                percentage: percentage,
+                answers: answers,
+                completedAt: new Date().toLocaleString()
+            };
+
+            testResults.push(result);
+
+            showTestResults(result);
+        }
+
+        function showTestResults(result) {
+            document.getElementById('testTakingSection').classList.add('hidden');
+            document.getElementById('testResultsSection').classList.remove('hidden');
+            document.getElementById('timerDisplay').classList.add('hidden');
+
+            const container = document.getElementById('resultsContainer');
+            
+            let resultHTML = `
+                <div class="result-summary">
+                    <h3>Ваш результат</h3>
+                    <p><strong>Тест:</strong> ${result.testTitle}</p>
+                    <p><strong>Набрано балів:</strong> ${result.score} з ${result.totalScore}</p>
+                    <p><strong>Відсоток:</strong> ${result.percentage}%</p>
+                    <p><strong>Дата проходження:</strong> ${result.completedAt}</p>
+                </div>
+
+                <h3>Детальні результати:</h3>
+            `;
+
+            currentTest.questions.forEach((question, index) => {
+                const answer = result.answers[index];
+                const questionResultDiv = `
+                    <div class="question-result ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                        <h4>Питання ${index + 1} (${question.points} ${question.points === 1 ? 'бал' : 'балів'})</h4>
+                        <p><strong>Питання:</strong> ${question.text}</p>
+                        <p><strong>Ваша відповідь:</strong> ${formatUserAnswer(question, answer.userAnswer)}</p>
+                        <p><strong>Правильна відповідь:</strong> ${formatCorrectAnswer(question)}</p>
+                        <p><strong>Результат:</strong> ${answer.isCorrect ? 'Правильно' : 'Неправильно'}</p>
+                    </div>
+                `;
+                resultHTML += questionResultDiv;
+            });
+
+            container.innerHTML = resultHTML;
+        }
+
+        function formatUserAnswer(question, userAnswer) {
+            if (userAnswer === null || userAnswer === undefined) return 'Не відповіли';
+            
+            if (question.type === 'single') {
+                return question.options[userAnswer] || 'Не відповіли';
+            } else if (question.type === 'multiple') {
+                return userAnswer.map(index => question.options[index]).join(', ') || 'Не відповіли';
+            } else if (question.type === 'fill') {
+                return userAnswer || 'Не відповіли';
+            } else if (question.type === 'matching') {
+                return userAnswer || 'Не відповіли';
+            }
+            
+            return 'Не відповіли';
+        }
+
+        function formatCorrectAnswer(question) {
+            if (question.type === 'single' || question.type === 'multiple') {
+                return question.correctAnswers.map(index => question.options[index]).join(', ');
+            } else if (question.type === 'fill') {
+                return question.correctAnswer;
+            } else if (question.type === 'matching') {
+                return question.pairs.map((pair, index) => `${index + 1}. ${pair[0]} - ${pair[1]}`).join(', ');
+            }
+            
+            return 'Не вказано';
+        }
+
+        function viewTestResult(testId) {
+            const result = testResults.find(r => 
+                r.testId === testId && r.studentEmail === currentUser.email
+            );
+            
+            if (result) {
+                const test = tests.find(t => t.id === testId);
+                currentTest = test;
+                showTestResults(result);
+            }
+        }
+
+        // Ініціалізація при завантаженні сторінки
+        window.onload = function() {
+            // Перевірка URL параметрів для прямого доступу до тесту
+            const urlParams = new URLSearchParams(window.location.search);
+            const testCode = urlParams.get('test');
+            
+            if (testCode) {
+                document.getElementById('accessCode').value = testCode;
+            }
+        };
+    </script>
+</body>
+</html>
